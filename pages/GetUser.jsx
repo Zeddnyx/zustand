@@ -5,7 +5,6 @@ import { useState } from "react";
 export default function Username() {
   const [username, setUsername] = useState("");
   const [user, getUser] = useStore((state) => {
-    console.log("get User from github exec");
     return [state.user, state.getUser];
   }, shallow);
 
@@ -17,7 +16,10 @@ export default function Username() {
         onChange={(e) => setUsername(e.target.value)}
       />
       <button onClick={() => getUser(username)}>GetUser</button>
-      <p>User: {user.login}</p>
+      <div>
+        <p>User: {user.login}</p>
+        <p>Foll: {user.followers}</p>
+      </div>
     </section>
   );
 }

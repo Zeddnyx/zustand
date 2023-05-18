@@ -3,7 +3,6 @@ import { shallow } from "zustand/shallow";
 
 export default function Username() {
   const [username, setUsername] = useStore((state) => {
-    console.log("username exec");
     return [state.username, state.setUsername];
   }, shallow);
 
