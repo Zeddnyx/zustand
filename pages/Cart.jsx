@@ -3,33 +3,22 @@ import { useStore } from "../stores/store";
 import { shallow } from "zustand/shallow";
 
 export default function Count() {
-  // get item from localStorage
-  const getCartFromLocal = JSON.parse(localStorage.getItem("cart"));
-  const [getCart, setGetCart] = useState(getCartFromLocal);
-
-  const [cart, setCart] = useStore((state) => {
-    return [state.cart, state.setCart];
+  const [cart, setCart, setRemoveCart] = useStore((state) => {
+    return [state.cart, state.setCart, state.setRemoveCart];
   }, shallow);
 
-  // add item to cart
   const handleClick = (item) => {
     setCart({
       title: item.title,
       price: item.price,
     });
   };
-  const handleClear = (item) => {
-    console.log("clear", item);
+  const handleRemove = (index) => {
+    setRemoveCart(index);
+    console.log("rmv");
   };
 
-  useEffect(() => {
-    // store to localStorage if new item added
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    console.log(getCart);
-  }, []);
+  const total = cart.reduce((acc, item) => acc + item.price, 0);
 
   return (
     <section>
@@ -37,30 +26,25 @@ export default function Count() {
         {data.map((item, id) => (
           <div key={id}>
             <h4>{item.title}</h4>
-            <span style={{ display: "flex", gap: "5x" }}>
-              <p>${item.price}</p>
-              <button onClick={() => handleClick(item)}>+</button>
-            </span>
+            <p>${item.price}</p>
+            <button onClick={() => handleClick(item)}>Add</button>
           </div>
         ))}
       </div>
 
-      <span>Your cart: {cart.length}</span>
-      {cart != 0
-        ? // cart have a value?
-          cart.map((item, id) => (
-            <div key={id}>
-              <p>{item.title}</p>
-              <button onClick={()=>handleClear(item)}>Clear Cart</button>
-            </div>
-          ))
-        : // after refresh getCart will show and map the data
-          getCart.map((item, id) => (
-            <div key={id}>
-              <p>{item.title}</p>
-              <button onClick={()=>handleClear(item)}>Clear Cart getCart</button>
-            </div>
-          ))}
+      <br />
+      <div style={{ display: "flex", gap: "10px" }}>
+        <span>Cart: {cart.length}</span>
+        <span>Total: {total}</span>
+      </div>
+      <div style={{ display: "flex", gap: "10px" }}>
+        {cart.map((item, id) => (
+          <div key={id}>
+            <p>{item.title}</p>
+            <button onClick={() => handleRemove(id)}>Rmv</button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -79,6 +63,3 @@ const data = [
     price: 40,
   },
 ];
-
-
-// still have a problem if user want to add new to cart after refresh it will replace cart previous
